@@ -1,13 +1,25 @@
 public class Radio {
     private int currentStation;
     private int currentVolume;
+    private final int maxStation;
+
+    public Radio() {
+        this.maxStation = 9;
+    }
+
+    public Radio(int stationCount) {
+        if (stationCount <= 0) {
+            throw new IllegalArgumentException("Количество станций должно быть положительным");
+        }
+        this.maxStation = stationCount - 1;
+    }
 
     public int getCurrentStation() {
         return currentStation;
     }
 
     public void setCurrentStation(int currentStation) {
-        if (currentStation < 0 || currentStation > 9) {
+        if (currentStation < 0 || currentStation > maxStation) {
             return;
         }
         this.currentStation = currentStation;
@@ -18,19 +30,11 @@ public class Radio {
     }
 
     public void nextStation() {
-        if (currentStation == 9) {
-            currentStation = 0;
-        } else {
-            currentStation++;
-        }
+        currentStation = currentStation == maxStation ? 0 : currentStation + 1;
     }
 
     public void prevStation() {
-        if (currentStation == 0) {
-            currentStation = 9;
-        } else {
-            currentStation--;
-        }
+        currentStation = currentStation == 0 ? maxStation : currentStation - 1;
     }
 
     public void increaseVolume() {
