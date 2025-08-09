@@ -3,29 +3,55 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class RadioTest {
 
+    // ============ Тесты конструкторов ============
     @Test
-    void shouldSetStationWithinRange() {
+    void shouldCreateDefaultRadioWith10Stations() {
+        Radio radio = new Radio();
+        radio.setCurrentStation(9);
+        assertEquals(9, radio.getCurrentStation());
+    }
+
+    @Test
+    void shouldCreateCustomRadio() {
+        Radio radio = new Radio(15);
+        radio.setCurrentStation(14);
+        assertEquals(14, radio.getCurrentStation());
+    }
+
+    @Test
+    void shouldThrowExceptionForZeroStations() {
+        assertThrows(IllegalArgumentException.class, () -> new Radio(0));
+    }
+
+    @Test
+    void shouldThrowExceptionForNegativeStations() {
+        assertThrows(IllegalArgumentException.class, () -> new Radio(-5));
+    }
+
+    // ============ Тесты станций (default) ============
+    @Test
+    void shouldSetValidStationDefault() {
         Radio radio = new Radio();
         radio.setCurrentStation(5);
         assertEquals(5, radio.getCurrentStation());
     }
 
     @Test
-    void shouldNotSetStationBelowMin() {
+    void shouldNotSetNegativeStationDefault() {
         Radio radio = new Radio();
         radio.setCurrentStation(-1);
-        assertEquals(0, radio.getCurrentStation());
+        assertEquals(0, radio.getCurrentStation()); // Проверка сохранения предыдущего значения
     }
 
     @Test
-    void shouldNotSetStationAboveMax() {
+    void shouldNotSetTooBigStationDefault() {
         Radio radio = new Radio();
         radio.setCurrentStation(10);
         assertEquals(0, radio.getCurrentStation());
     }
 
     @Test
-    void shouldSwitchToNextStation() {
+    void shouldSwitchNextFromMiddleDefault() {
         Radio radio = new Radio();
         radio.setCurrentStation(5);
         radio.nextStation();
@@ -33,7 +59,7 @@ class RadioTest {
     }
 
     @Test
-    void shouldSwitchToZeroAfterMaxStation() {
+    void shouldWrapNextFromLastDefault() {
         Radio radio = new Radio();
         radio.setCurrentStation(9);
         radio.nextStation();
@@ -41,7 +67,7 @@ class RadioTest {
     }
 
     @Test
-    void shouldSwitchToPrevStation() {
+    void shouldSwitchPrevFromMiddleDefault() {
         Radio radio = new Radio();
         radio.setCurrentStation(5);
         radio.prevStation();
@@ -49,22 +75,48 @@ class RadioTest {
     }
 
     @Test
-    void shouldSwitchToMaxAfterZeroStation() {
+    void shouldWrapPrevFromFirstDefault() {
         Radio radio = new Radio();
         radio.setCurrentStation(0);
         radio.prevStation();
         assertEquals(9, radio.getCurrentStation());
     }
 
+    // ============ Тесты станций (custom) ============
     @Test
-    void shouldIncreaseVolume() {
+    void shouldSwitchNextFromMiddleCustom() {
+        Radio radio = new Radio(15);
+        radio.setCurrentStation(5);
+        radio.nextStation();
+        assertEquals(6, radio.getCurrentStation());
+    }
+
+    @Test
+    void shouldWrapNextFromLastCustom() {
+        Radio radio = new Radio(15);
+        radio.setCurrentStation(14);
+        radio.nextStation();
+        assertEquals(0, radio.getCurrentStation());
+    }
+
+    @Test
+    void shouldWrapPrevFromFirstCustom() {
+        Radio radio = new Radio(15);
+        radio.setCurrentStation(0);
+        radio.prevStation();
+        assertEquals(14, radio.getCurrentStation());
+    }
+
+    // ============ Тесты громкости ============
+    @Test
+    void shouldIncreaseVolumeFromZero() {
         Radio radio = new Radio();
         radio.increaseVolume();
         assertEquals(1, radio.getCurrentVolume());
     }
 
     @Test
-    void shouldNotIncreaseVolumeAboveMax() {
+    void shouldNotIncreaseAboveMaxVolume() {
         Radio radio = new Radio();
         for (int i = 0; i < 100; i++) {
             radio.increaseVolume();
@@ -77,24 +129,15 @@ class RadioTest {
     @Test
     void shouldDecreaseVolume() {
         Radio radio = new Radio();
-        radio.increaseVolume(); // volume = 1
+        radio.increaseVolume(); // Сначала увеличиваем до 1
         radio.decreaseVolume();
         assertEquals(0, radio.getCurrentVolume());
     }
 
     @Test
-    void shouldNotDecreaseVolumeBelowMin() {
+    void shouldNotDecreaseBelowMinVolume() {
         Radio radio = new Radio();
         radio.decreaseVolume();
         assertEquals(0, radio.getCurrentVolume());
-    }
-
-    @Test
-    void shouldSetVolumeToMax() {
-        Radio radio = new Radio();
-        for (int i = 0; i < 100; i++) {
-            radio.increaseVolume();
-        }
-        assertEquals(100, radio.getCurrentVolume());
     }
 }
